@@ -13,24 +13,28 @@ SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")  # Change for other pro
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")  # Your email address
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")  # App password (for Gmail)
-TO_EMAIL = os.getenv("TO_EMAIL", EMAIL_ADDRESS)  # Default to self if not set
+# Comma-separated list of recipients in TO_EMAIL, defaults to self if not set
+TO_EMAILS = [e.strip() for e in os.getenv("TO_EMAIL", EMAIL_ADDRESS or "").split(",") if e.strip()]
 
 def send_email(subject, body):
     try:
         msg = MIMEMultipart()
         msg['From'] = EMAIL_ADDRESS
-        msg['To'] = TO_EMAIL
+        msg['To'] = ", ".join(TO_EMAILS)
         msg['Subject'] = subject
         
         msg.attach(MIMEText(body, 'plain'))
         
         if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
             raise RuntimeError("Missing EMAIL_ADDRESS or EMAIL_PASSWORD environment variables.")
+        if not TO_EMAILS:
+            raise RuntimeError("No recipients provided. Set TO_EMAIL with one or more comma-separated emails.")
 
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
         server.starttls()
         server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        server.send_message(msg)
+        # send to multiple recipients
+        server.sendmail(EMAIL_ADDRESS, TO_EMAILS, msg.as_string())
         server.quit()
         
         print("Email sent successfully!")
@@ -62,6 +66,7 @@ if response.status_code == 200:
             body = f"Waitlist update for class:\n{url}\n\nWaitlist Count: {waitlist_count}\nWaitlist Capacity: {waitlist_capacity}\n\nThere may be availability on the waitlist!"
             send_email(subject, body)
         else:
+            send_email("Test Email", "Github action test email. waitlist is still full.")
             print("Waitlist is full. No email sent.")
     else:
         print("No stats found")

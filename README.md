@@ -11,15 +11,8 @@ pip install -r requirements.txt
 
 2. Configure environment variables:
     - Create a `.env` file and fill in your values.
-        -   # SMTP configuration
-            SMTP_SERVER=smtp.gmail.com
-            SMTP_PORT=587
-
-            # Email credentials
-            EMAIL_ADDRESS=example@gmail.com
-            EMAIL_PASSWORD=examplepassword
-
-            # Recipient (defaults to EMAIL_ADDRESS if not set)
-            TO_EMAIL=example@gmail.com
-
-> Note: `.env` is gitignored so your secrets won't be committed.
+        SMTP_SERVER=smtp.gmail.com  
+        SMTP_PORT=587  
+        EMAIL_ADDRESS=example@gmail.com  
+        EMAIL_PASSWORD=examplepassword    
+        TO_EMAIL=example@gmail.com,example2@gmail.com,...  
