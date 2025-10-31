@@ -66,7 +66,6 @@ if response.status_code == 200:
             body = f"Waitlist update for class:\n{url}\n\nWaitlist Count: {waitlist_count}\nWaitlist Capacity: {waitlist_capacity}\n\nThere may be availability on the waitlist!"
             send_email(subject, body)
         else:
-            send_email("Test Email", "Github action test email. waitlist is still full.")
             print("Waitlist is full. No email sent.")
     else:
         print("No stats found")
