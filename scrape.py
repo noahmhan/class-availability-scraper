@@ -57,10 +57,17 @@ if response.status_code == 200:
     stats = soup.find(class_="stats")
     if stats:
         text = stats.get_text().split("\n")
+
         waitlist_count = int(text[2].split(": ")[1])
+        class_capacity = int(text[3].split(": ")[1])
         waitlist_capacity = int(text[4].split(": ")[1])
         print(waitlist_count != waitlist_capacity, waitlist_count, waitlist_capacity)
         
+        if class_capacity > 70:
+            subject = "Class Capacity Alert"
+            body = f"Class capacity for class:\n{url}\n\nClass Capacity: {class_capacity}\n\nClass size has expanded!"
+            send_email(subject, body)
+
         if waitlist_count != waitlist_capacity:
             subject = "Class Waitlist Availability Alert"
             body = f"Waitlist update for class:\n{url}\n\nWaitlist Count: {waitlist_count}\nWaitlist Capacity: {waitlist_capacity}\n\nThere may be availability on the waitlist!"
